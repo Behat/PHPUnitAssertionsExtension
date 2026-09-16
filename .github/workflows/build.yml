@@ -25,35 +25,53 @@ jobs:
         os: [ubuntu-latest]
         composer-mode: [update]
         symfony-version: ['']
+        phpunit-version: ['']
         include:
-          # Build on the lowest supported PHP with the lowest supported dependencies
+          # Older PHPUnit versions - run on the lowest (supported) PHP that each PHPUnit version supports
+          # We do not expect to see any variation in our own behaviour across different PHP versions.
           - php: 8.2
             os: ubuntu-latest
-            composer-mode: lowest
+            composer-mode: [update]
             symfony-version: ''
+            phpunit-version: 8
 
-          # MacOS on latest PHP only
+          - php: 8.2
+            os: ubuntu-latest
+            composer-mode: [ update ]
+            symfony-version: ''
+            phpunit-version: 9
+
+          # MacOS on latest of all dependencies only
           - php: 8.5
             os: macos-latest
             composer-mode: update
             symfony-version: ''
+            phpunit-version: ''
 
-          # Windows on latest PHP only
+          # Windows on latest of all dependencies only
           - php: 8.5
             os: windows-latest
             composer-mode: update
             symfony-version: ''
+            phpunit-version: ''
 
           # Symfony LTS jobs:
+          # - These are only required to ensure that our use of ContainerBuilder is compatible with all Behat-supported
+          #   Symfony versions. There's no interaction between the PHPUnit version and the symfony version
+          #   that could affect our behaviour at runtime.
+          #   Therefore, we don't need variants of Symfony/PHPUnit, we can just run with whatever is installable
+
           - php: 8.2
             os: ubuntu-latest
             composer-mode: update
             symfony-version: '5.4.*'
+            phpunit-version: ''
 
           - php: 8.2
             os: ubuntu-latest
             composer-mode: update
             symfony-version: '6.4.*'
+            phpunit-version: ''
 
           # Symfony 7.4 LTS already builds on our normal PHP 8.2 and PHP 8.3 jobs
 
@@ -68,28 +86,33 @@ jobs:
           ini-values: "phar.readonly=0,zend.exception_ignore_args=Off"
           coverage: none
 
-      - name: Configure Composer minimum stability
-        if: matrix.composer-minimum-stability != ''
-        run: composer config minimum-stability ${{ matrix.composer-minimum-stability }}
-
       - name: Install symfony/flex
         if: matrix.symfony-version != ''
         run: |
           composer config --global --no-plugins allow-plugins.symfony/flex true &&
           composer global require symfony/flex
 
-      - name: Install latest dependencies
-        if: matrix.composer-mode == 'update'
+      - name: Install composer dependencies
         env:
           SYMFONY_REQUIRE: ${{ matrix.symfony-version }}
-        run: composer update
-
-      - name: Install lowest dependencies
-        if: matrix.composer-mode == 'lowest'
-        run: composer update --prefer-lowest
+          COMPOSER_PHPUNIT: |-
+            ${{ case(
+              matrix.phpunit-version == '',
+              '',
+              format('--with=''phpunit/phpunit:^{0}''', matrix.phpunit-version)
+            ) }}
+          COMPOSER_LOWEST: ${{ case(matrix.composer-mode == 'lowest', '--prefer-lowest', '') }}
+        run: composer update $COMPOSER_PHPUNIT $COMPOSER_LOWEST
 
       - name: Run tests (Behat)
-        run: vendor/bin/behat -fprogress --strict
+        env:
+          PHPUNIT_PROFILE: |-
+            ${{ case(
+              matrix.phpunit-version == '',
+              'phpunit-10',
+              format('phpunit-', matrix.phpunit-version)
+            ) }}
+        run: vendor/bin/behat -fpretty --strict --profile=$PHPUNIT_PROFILE
 
   static-analysis:
     name: Static analysis
