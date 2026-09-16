@@ -14,8 +14,6 @@ use Behat\Testwork\Exception\Stringer\ExceptionStringer;
 use Exception;
 use PHPUnit\Framework\TestFailure;
 use PHPUnit\Util\ThrowableToStringMapper;
-use PHPUnit_Framework_Exception;
-use PHPUnit_Framework_TestFailure;
 use Throwable;
 
 /**
@@ -29,11 +27,10 @@ final class PHPUnitExceptionStringer implements ExceptionStringer
 {
     public function supportsException(Exception $exception): bool
     {
-        return $exception instanceof PHPUnit_Framework_Exception
-            || $exception instanceof \PHPUnit\Framework\Exception;
+        return $exception instanceof \PHPUnit\Framework\Exception;
     }
 
-    public function stringException(Exception $exception, $verbosity): string
+    public function stringException(Exception $exception, int $verbosity): string
     {
         // PHPUnit assertion exceptions do not include detailed expected / observed info in their messages. Instead,
         // test result printers within PHPUnit are expected to format and present that information separately. The
@@ -41,13 +38,8 @@ final class PHPUnitExceptionStringer implements ExceptionStringer
         //
         //   *  @internal This class is not covered by the backward compatibility promise for PHPUnit`
         //
-        // Behat itself does not use PHPUnit at runtime, and user projects may use PHPUnit solely for unit tests with
-        // a completely separate assertion mechanism for their Behat steps.
-        //
-        // Therefore, Behat does not impose any formal PHPUnit version constraints.
-        //
-        // Instead, we make a best effort to render as much detail of a PHPUnit assertion failure as we can, without
-        // masking that the ultimate problem was caused by a failed assertion in the user's own code.
+        // This extension makes a best effort to render as  much detail of a PHPUnit assertion failure as we can,
+        // in a PHPUnit version we support.
         //
         // **
         // * We cannot guarantee that this will work, or produce the same output, even across minor PHPUnit versions.
@@ -59,7 +51,7 @@ final class PHPUnitExceptionStringer implements ExceptionStringer
         // * Roll back to a PHPUnit minor / patch version that you know works for you.
         // * Catch the failures within your Context classes and format them yourself. For example, you could implement
         //   a generic wrapper to call like `MyClass::formatFailure(fn () => Assert::assertSame(1, 2, 'Uh-oh'))`.
-        // * Contribute a PR to Behat to add support for the newer PHPUnit version :)
+        // * Contribute a PR to this extension to add support for a newer PHPUnit version
 
         try {
             if (class_exists(ThrowableToStringMapper::class)) {
@@ -70,11 +62,6 @@ final class PHPUnitExceptionStringer implements ExceptionStringer
             if (class_exists(TestFailure::class)) {
                 // PHPUnit 6.0.0 - 9.x
                 return trim(TestFailure::exceptionToString($exception));
-            }
-
-            if (class_exists(PHPUnit_Framework_TestFailure::class)) {
-                // PHPUnit < 6 (support ended in 2016)
-                return trim(PHPUnit_Framework_TestFailure::exceptionToString($exception));
             }
 
             // PHPUnit must be present, because we got a PHPUnit exception. So it must be a newer version with a
