@@ -61,6 +61,7 @@ final class PHPUnitExceptionStringer implements ExceptionStringer
 
             if (class_exists(TestFailure::class)) {
                 // PHPUnit 6.0.0 - 9.x
+                /* @phpstan-ignore argument.type (PHPStan can't detect the interface of TestFailure::exceptionToString when a newer PHPUnit version is installed) */
                 return trim(TestFailure::exceptionToString($exception));
             }
 
