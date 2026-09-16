@@ -13,12 +13,16 @@
     ],
     "require": {
         "php": ">=8.2 <8.6",
-        "behat/behat": "^4.0@alpha"
+        "behat/behat": "^4.0@alpha",
+        "phpunit/phpunit": "^8.5"
     },
     "require-dev": {
         "php-cs-fixer/shim": "^3.89",
         "phpstan/phpstan": "2.1.46",
-        "rector/rector": "2.3.9"
+        "rector/rector": "2.3.9",
+        "sebastian/diff": ">=3.0.6 <10",
+        "symfony/filesystem": "^5.4 || ^6.4 || ^7.0 || ^8.0",
+        "symfony/process": "^5.4 || ^6.4 || ^7.0 || ^8.0"
     },
     "autoload": {
         "psr-4": {
@@ -27,7 +31,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Behat\\Tests\\": "tests/Behat/Tests/"
+            "tests\\Behat\\PHPUnitAssertionsExtension\\": "tests/"
         }
     },
     "scripts": {
