@@ -99,7 +99,7 @@ jobs:
             ${{ case(
               matrix.phpunit-version == '',
               '',
-              format('--with=''phpunit/phpunit:^{0}''', matrix.phpunit-version)
+              format('--with=phpunit/phpunit:^{0}', matrix.phpunit-version)
             ) }}
           COMPOSER_LOWEST: ${{ case(matrix.composer-mode == 'lowest', '--prefer-lowest', '') }}
         run: composer update $COMPOSER_PHPUNIT $COMPOSER_LOWEST
