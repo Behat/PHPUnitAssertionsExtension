@@ -110,7 +110,7 @@ jobs:
             ${{ case(
               matrix.phpunit-version == '',
               'phpunit-10',
-              format('phpunit-', matrix.phpunit-version)
+              format('phpunit-{0}', matrix.phpunit-version)
             ) }}
         run: vendor/bin/behat -fpretty --strict --profile=$PHPUNIT_PROFILE
 
