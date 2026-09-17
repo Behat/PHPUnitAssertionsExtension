@@ -7,7 +7,7 @@ use Behat\Testwork\ServiceContainer\ExtensionManager;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class BehatPHPUnitAssertionsExtension implements Extension
+final class BehatPHPUnitAssertionsExtension implements Extension
 {
     public function getConfigKey(): string
     {
