@@ -219,7 +219,6 @@ class FeatureContext implements Context
             assert($contents !== false, 'file_get_contents() should not return false without emitting a PHP warning');
 
             return $contents;
-
         } finally {
             restore_error_handler();
         }
