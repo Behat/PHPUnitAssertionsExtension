@@ -9,6 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+use RuntimeException;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Hook\AfterSuite;
@@ -177,7 +178,7 @@ class FeatureContext implements Context
         }
 
         try {
-            $reportJSON = $this->filesystem->readFile($this->jsonReportFile);
+            $reportJSON = $this->readFile($this->jsonReportFile);
 
             return (new JsonReportSummariser())->summarise($reportJSON);
         } catch (Throwable $e) {
@@ -198,6 +199,29 @@ class FeatureContext implements Context
                 $e->getCode(),
                 $e,
             );
+        }
+    }
+
+    private function readFile(string $filePath): string
+    {
+        // Once we drop support for older symfony versions, we can use the `readFile` provided by
+        // symfony/filesystem. Until then we need to implement our own.
+        if (!is_file($filePath)) {
+            throw new RuntimeException('No file at ' . $filePath);
+        }
+
+        set_error_handler(
+            static fn (int $severity, string $message, string $file, int $line) => throw new ErrorException($message, 0, $severity, $file, $line)
+        );
+
+        try {
+            $contents = file_get_contents($filePath);
+            assert($contents !== false, 'file_get_contents() should not return false without emitting a PHP warning');
+
+            return $contents;
+
+        } finally {
+            restore_error_handler();
         }
     }
 }
