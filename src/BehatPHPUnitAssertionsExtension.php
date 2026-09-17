@@ -2,6 +2,7 @@
 
 namespace Behat\PHPUnitAssertionsExtension;
 
+use Behat\Behat\EventDispatcher\ServiceContainer\EventDispatcherExtension;
 use Behat\Testwork\Exception\ServiceContainer\ExceptionExtension;
 use Behat\Testwork\Exception\Stringer\PHPUnitExceptionStringer;
 use Behat\Testwork\ServiceContainer\Extension;
@@ -29,9 +30,22 @@ final class BehatPHPUnitAssertionsExtension implements Extension
 
     public function load(ContainerBuilder $container, array $config): void
     {
+        $this->loadStringer($container);
+        $this->loadBootstrappingListener($container);
+    }
+
+    private function loadStringer(ContainerBuilder $container): void
+    {
         $definition = new Definition(PHPUnitExceptionStringer::class);
         $definition->addTag(ExceptionExtension::STRINGER_TAG, ['priority' => 50]);
-        $container->setDefinition(ExceptionExtension::STRINGER_TAG. '.phpunit_assertions', $definition);
+        $container->setDefinition(ExceptionExtension::STRINGER_TAG.'.phpunit_assertions', $definition);
+    }
+
+    private function loadBootstrappingListener(ContainerBuilder $container): void
+    {
+        $definition = new Definition(PHPUnitBootstrappingListener::class);
+        $definition->addTag(EventDispatcherExtension::SUBSCRIBER_TAG, ['priority' => -10]);
+        $container->setDefinition('phpunit_assertions.bootstrapping_listener', $definition);
     }
 
     public function process(ContainerBuilder $container): void
