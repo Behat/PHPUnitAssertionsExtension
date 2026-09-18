@@ -7,8 +7,8 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "Konstantin Kudryashov",
-            "homepage": "http://everzet.com"
+            "name": "Behat contributors",
+            "homepage": "https://behat.org"
         }
     ],
     "require": {
