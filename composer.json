@@ -1,0 +1,53 @@
+{
+    "name": "behat/phpunit-assertions-extension",
+    "description": "Behat extension to support PHPUnit assertions in step definitions. NOTE: Not recommended for new projects",
+    "keywords": ["BDD", "Behat", "testing", "documentation"],
+    "homepage": "https://docs.behat.org/en/latest/useful_resources.html#assertion-tools",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Behat contributors",
+            "homepage": "https://behat.org"
+        }
+    ],
+    "require": {
+        "php": ">=8.2 <8.6",
+        "behat/behat": "^4.0@alpha"
+    },
+    "require-dev": {
+        "php-cs-fixer/shim": "^3.89",
+        "phpstan/phpstan": "2.1.46",
+        "rector/rector": "2.3.9"
+    },
+    "autoload": {
+        "psr-4": {
+            "Behat\\PHPUnitAssertionsExtension\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Behat\\Tests\\": "tests/Behat/Tests/"
+        }
+    },
+    "scripts": {
+        "all-tests": [
+            "@cs",
+            "@behat-progress",
+            "@phpunit",
+            "@phpstan",
+            "@rector"
+        ],
+        "behat": "LANG=C bin/behat  --rerun",
+        "behat-progress": "LANG=C bin/behat --format=progress",
+        "phpstan": "phpstan",
+        "phpunit": "phpunit",
+        "cs": "php-cs-fixer fix --dry-run --verbose --diff",
+        "cs-fix": "php-cs-fixer fix",
+        "rector": "rector --dry-run",
+        "rector-fix": "rector"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
