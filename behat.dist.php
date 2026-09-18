@@ -28,4 +28,19 @@ return (new Config())
             ->withGherkinOptions((new GherkinOptions())
                 ->withFilter(new TagFilter('@phpunit-any, @phpunit-10'))
             )
+    )->withProfile(
+        (new Profile('phpunit-11'))
+            ->withGherkinOptions((new GherkinOptions())
+                ->withFilter(new TagFilter('@phpunit-any, @phpunit-11'))
+            )
+    )->withProfile(
+        (new Profile('phpunit-12'))
+            ->withGherkinOptions((new GherkinOptions())
+                ->withFilter(new TagFilter('@phpunit-any, @phpunit-12'))
+            )
+    )->withProfile(
+        (new Profile('phpunit-13'))
+            ->withGherkinOptions((new GherkinOptions())
+                ->withFilter(new TagFilter('@phpunit-any, @phpunit-13'))
+            )
     );

@@ -62,10 +62,22 @@ jobs:
             composer-flags: ''
             os: 'ubuntu-latest'
 
+          - php: '8.4'
+            phpunit-version: '11'
+            symfony-version: '8.*'
+            composer-flags: ''
+            os: 'ubuntu-latest'
+
+          - php: '8.5'
+            phpunit-version: '12'
+            symfony-version: '8.*'
+            composer-flags: ''
+            os: 'ubuntu-latest'
+
           # On the highest supported PHPUnit / PHP version, leave symfony unspecified
           # This ensures that the build passes with only our own composer dependencies, not symfony/flex
           - php: '8.5'
-            phpunit-version: '10'
+            phpunit-version: '13'
             symfony-version: ''
             composer-flags: ''
             os: 'ubuntu-latest'
@@ -73,12 +85,12 @@ jobs:
           # Test the highest supported versions on windows & macos
           # These do merit second jobs, in case the output varies between platforms
           - php: '8.5'
-            phpunit-version: '10'
+            phpunit-version: '13'
             symfony-version: '8.*'
             os: 'windows-latest'
 
           - php: '8.5'
-            phpunit-version: '10'
+            phpunit-version: '13'
             symfony-version: '8.*'
             os: 'macos-latest'
 
