@@ -14,9 +14,11 @@
     "require": {
         "php": ">=8.2 <8.6",
         "behat/behat": "^4.0@alpha",
-        "phpunit/phpunit": "^8.5"
+        "phpunit/phpunit": "^8.5 || ^9.6 || ^10.5",
+        "symfony/dependency-injection": "^5.4 || ^6.4 || ^7.0 || ^8.0"
     },
     "require-dev": {
+        "composer-runtime-api": "*",
         "php-cs-fixer/shim": "^3.89",
         "phpstan/phpstan": "2.1.46",
         "rector/rector": "2.3.9",

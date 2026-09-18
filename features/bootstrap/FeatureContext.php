@@ -10,12 +10,14 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 use Behat\Behat\Context\Context;
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Hook\AfterSuite;
 use Behat\Hook\BeforeScenario;
 use Behat\Hook\BeforeSuite;
 use Behat\Step\Then;
 use Behat\Step\When;
+use Composer\InstalledVersions;
 use RuntimeException;
 use SebastianBergmann\Diff\Differ;
 use SebastianBergmann\Diff\Output\DiffOnlyOutputBuilder;
@@ -62,6 +64,42 @@ class FeatureContext implements Context
 
         $this->filesystem->mkdir($dir);
         $this->workingDir = $dir;
+    }
+
+    #[BeforeScenario]
+    public function validateInstalledPhpunitVersion(BeforeScenarioScope $beforeScenario): void
+    {
+        $tags = [...$beforeScenario->getFeature()->getTags(), ...$beforeScenario->getScenario()->getTags()];
+        $versionTags = array_filter($tags, fn ($tag) => (bool) preg_match('/^@phpunit-\d+$/', (string) $tag));
+        if (count($versionTags) === 0) {
+            return;
+        }
+
+        $phpUnitVersion = InstalledVersions::getVersion('phpunit/phpunit');
+        if ($phpUnitVersion === null) {
+            throw new RuntimeException('Unable to find the installed phpunit version');
+        }
+        if (!preg_match('/^(?P<major>\d+)\.[\d.]+/', $phpUnitVersion, $versionMatches)) {
+            throw new RuntimeException('Unable to parse the installed phpunit version (got '.$phpUnitVersion.')');
+        }
+
+        $majorVersion = $versionMatches['major'];
+        if (in_array('@phpunit-'.$majorVersion, $versionTags)) {
+            return;
+        }
+
+        throw new RuntimeException(
+            sprintf(
+                <<<'TEXT'
+                This scenario does not support the installed phpunit version. Are you running the correct Behat profile?
+                - PHPUnit Installed: %s
+                - Scenario tag(s):   %s
+
+                TEXT,
+                $phpUnitVersion,
+                implode(', ', $versionTags),
+            ),
+        );
     }
 
     #[When('I initialise the working directory from the :dir fixtures folder')]
