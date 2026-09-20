@@ -32,27 +32,6 @@ final class PHPUnitExceptionStringer implements ExceptionStringer
 
     public function stringException(Exception $exception, int $verbosity): string
     {
-        // PHPUnit assertion exceptions do not include detailed expected / observed info in their messages. Instead,
-        // test result printers within PHPUnit are expected to format and present that information separately. The
-        // mechanism for this varies between PHPUnit major versions, and all the implementations are tagged with:
-        //
-        //   *  @internal This class is not covered by the backward compatibility promise for PHPUnit`
-        //
-        // This extension makes a best effort to render as  much detail of a PHPUnit assertion failure as we can,
-        // in a PHPUnit version we support.
-        //
-        // **
-        // * We cannot guarantee that this will work, or produce the same output, even across minor PHPUnit versions.
-        // * That said, historically this has been relatively stable for a given major version series.
-        // **
-        //
-        // If you encounter a problem rendering PHPUnit assertions in your project, you have three options:
-        //
-        // * Roll back to a PHPUnit minor / patch version that you know works for you.
-        // * Catch the failures within your Context classes and format them yourself. For example, you could implement
-        //   a generic wrapper to call like `MyClass::formatFailure(fn () => Assert::assertSame(1, 2, 'Uh-oh'))`.
-        // * Contribute a PR to this extension to add support for a newer PHPUnit version
-
         try {
             if (class_exists(ThrowableToStringMapper::class)) {
                 // PHPUnit 10.0.0 onwards
