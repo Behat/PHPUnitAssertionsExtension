@@ -1,7 +1,7 @@
 @phpunit-12
-Feature: PHPUnit assertions are rendered as expected with PHPUnit 10
+Feature: PHPUnit assertions are rendered as expected with PHPUnit 12
   In order to understand why my features failed
-  As a feature developer using PHPUnit 10
+  As a feature developer using PHPUnit 12
   I need to see the details of any assertion failures in the test report
 
   Scenario: Formatted assertion output when assertions fail
