@@ -7,7 +7,7 @@ step definitions. Since Behat 4.0, Behat core does not provide any built-in supp
 > PHPUnit's author has [explicitly stated](https://github.com/sebastianbergmann/phpunit/issues/6175#issuecomment-2782498694)
 > that using PHPUnit assertions outside of PHPUnit itself is not supported or covered by any backwards
 > compatibility promise. Therefore we **strongly recommend** that you
-> [use a different assertion tool]([url](https://docs.behat.org/en/latest/useful_resources.html#assertion-tools))
+> [use a different assertion tool](#other-assertion-tools)
 > in new projects. Read the important information below before using in an existing project.
 
 [![License](https://poser.pugx.org/behat/PHPUnitAssertionsExtension/license.svg)](https://packagist.org/packages/behat/phpunitassertionsextension)
@@ -88,8 +88,24 @@ Behat steps. The extension is designed to provide support for legacy projects fo
 is feasible, but it is not a long-term solution.
 
 As a minimum, consider using a different assertion tool any time that you implement new Steps or
-refactor existing ones. Behat counts any `Exception` as a step failure, so you can easily use
-more than one assertion library (or no library, for simple assertions).
+refactor existing ones.
+
+### Other assertion tools
+
+Behat does not officially recommend an assertion library - you can use any code that throws an 
+`Exception` on failure. You easily use more than one library in parallel (or no library, for 
+simple assertions).
+
+Some well-known options are:
+
+* [zenstruck/assert](https://packagist.org/packages/zenstruck/assert) - specifically designed
+  for dependency-free test assertions, which is reflected in the information it provides
+  when assertions fail.
+* [beberlei/assert](https://packagist.org/packages/beberlei/assert) - primarily designed
+  as a fast, lightweight input validation library for business models and runtime code.
+* [webmozart/assert](https://packagist.org/packages/webmozart/assert) - inspired by
+  beberlei/assert and also designed for runtime assertions, but with more control over
+  failure messages.
 
 ## Installing and enabling the extension
 
