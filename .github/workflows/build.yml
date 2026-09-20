@@ -21,41 +21,62 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [8.2, 8.3, 8.4, 8.5]
-        os: [ubuntu-latest]
-        composer-mode: [update]
-        symfony-version: ['']
+        # We need to cover combinations of three separate versions (PHP, PHPUnit, Symfony).
+        #
+        # But in practice, the Symfony dependency is so small (just the symfony/container that Behat passes to our
+        # Extension) that it doesn't merit standalone runs for each Symfony version. We just need to make sure each
+        # version has been used somewhere.
+        #
+        # Similarly, our own code is so thin (and covered by PHPStan / Rector) that we don't need to cover every
+        # possible PHP version with every possible PHPUnit version.
+        #
+        # Therefore, instead of using a base matrix, we specify all the builds explicitly. This makes it easier to be
+        # sure we're covering everything we need to, without a ridiculous number of combinations.
+        #
+        # Being explicit about all options also makes it easier to see which job is which in the UI.
         include:
-          # Build on the lowest supported PHP with the lowest supported dependencies
-          - php: 8.2
-            os: ubuntu-latest
-            composer-mode: lowest
-            symfony-version: ''
 
-          # MacOS on latest PHP only
-          - php: 8.5
-            os: macos-latest
-            composer-mode: update
-            symfony-version: ''
-
-          # Windows on latest PHP only
-          - php: 8.5
-            os: windows-latest
-            composer-mode: update
-            symfony-version: ''
-
-          # Symfony LTS jobs:
-          - php: 8.2
-            os: ubuntu-latest
-            composer-mode: update
+          # One job to test the lowest of all possible supported combinations with --prefer-lowest
+          - php: '8.2'
+            phpunit-version: '8'
             symfony-version: '5.4.*'
+            composer-flags: '--prefer-lowest'
+            os: 'ubuntu-latest'
 
-          - php: 8.2
-            os: ubuntu-latest
-            composer-mode: update
+          # Then from the oldest to newest PHPUnit version, picking up PHP and Symfony versions at the same time
+          - php: '8.2'
+            phpunit-version: '8'
+            symfony-version: '5.4.*'
+            os: 'ubuntu-latest'
+
+          - php: '8.3'
+            phpunit-version: '9'
             symfony-version: '6.4.*'
+            os: 'ubuntu-latest'
 
-          # Symfony 7.4 LTS already builds on our normal PHP 8.2 and PHP 8.3 jobs
+          - php: '8.4'
+            phpunit-version: '10'
+            symfony-version: '7.4.*'
+            os: 'ubuntu-latest'
+
+          # On the highest supported PHPUnit / PHP version, leave symfony unspecified
+          # This ensures that the build passes with only our own composer dependencies, not symfony/flex
+          - php: '8.5'
+            phpunit-version: '10'
+            symfony-version: ''
+            os: 'ubuntu-latest'
+
+          # Test the highest supported versions on windows & macos
+          # These do merit second jobs, in case the output varies between platforms
+          - php: '8.5'
+            phpunit-version: '10'
+            symfony-version: '8.*'
+            os: 'windows-latest'
+
+          - php: '8.5'
+            phpunit-version: '10'
+            symfony-version: '8.*'
+            os: 'macos-latest'
 
     steps:
       - uses: actions/checkout@v7
@@ -68,28 +89,19 @@ jobs:
           ini-values: "phar.readonly=0,zend.exception_ignore_args=Off"
           coverage: none
 
-      - name: Configure Composer minimum stability
-        if: matrix.composer-minimum-stability != ''
-        run: composer config minimum-stability ${{ matrix.composer-minimum-stability }}
-
       - name: Install symfony/flex
         if: matrix.symfony-version != ''
         run: |
           composer config --global --no-plugins allow-plugins.symfony/flex true &&
           composer global require symfony/flex
 
-      - name: Install latest dependencies
-        if: matrix.composer-mode == 'update'
+      - name: Install composer dependencies
         env:
           SYMFONY_REQUIRE: ${{ matrix.symfony-version }}
-        run: composer update
-
-      - name: Install lowest dependencies
-        if: matrix.composer-mode == 'lowest'
-        run: composer update --prefer-lowest
+        run: composer update ${{ format('--with=phpunit/phpunit:^{0}', matrix.phpunit-version) }} ${{ matrix.composer-flags }}
 
       - name: Run tests (Behat)
-        run: vendor/bin/behat -fprogress --strict
+        run: vendor/bin/behat -fpretty --strict --profile=${{ format('phpunit-{0}', matrix.phpunit-version) }}
 
   static-analysis:
     name: Static analysis
