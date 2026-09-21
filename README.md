@@ -152,7 +152,6 @@ code - but note the caveats above about support for PHPUnit versions.
 
 ## Useful Links
 
-- Information about alternative assertion libraries is at [https://docs.behat.org/en/latest/useful_resources.html#assertion-tools](https://docs.behat.org/en/latest/useful_resources.html#assertion-tools)
 - The main website is at [https://behat.org](https://behat.org)
 - The documentation is at [https://docs.behat.org/en/latest/](https://docs.behat.org/en/latest/)
 - [Note on Patches/Pull Requests](CONTRIBUTING.md)
