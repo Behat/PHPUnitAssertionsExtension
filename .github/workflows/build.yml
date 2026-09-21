@@ -76,6 +76,14 @@ jobs:
             symfony-version: ''
             os: 'ubuntu-latest'
 
+          # We only need to test one variant with Behat 3, there are very few differences that affect us.
+          # Use PHPUnit 13 as we know that is broken on Behat 3 even with the legacy built-in support.
+          - php: '8.5'
+            phpunit-version: '13'
+            symfony-version: ''
+            os: 'ubuntu-latest'
+            composer-flags: '--with=behat/behat:^3'
+
           # Test the highest supported versions on windows & macos
           # These do merit second jobs, in case the output varies between platforms
           - php: '8.5'
