@@ -18,7 +18,6 @@ use Behat\Hook\BeforeSuite;
 use Behat\Step\Then;
 use Behat\Step\When;
 use Composer\InstalledVersions;
-use RuntimeException;
 use SebastianBergmann\Diff\Differ;
 use SebastianBergmann\Diff\Output\DiffOnlyOutputBuilder;
 use Symfony\Component\Filesystem\Filesystem;

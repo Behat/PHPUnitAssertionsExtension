@@ -4,7 +4,6 @@ namespace Behat\PHPUnitAssertionsExtension;
 
 use Behat\Behat\EventDispatcher\ServiceContainer\EventDispatcherExtension;
 use Behat\Testwork\Exception\ServiceContainer\ExceptionExtension;
-use Behat\Testwork\Exception\Stringer\PHPUnitExceptionStringer;
 use Behat\Testwork\ServiceContainer\Extension;
 use Behat\Testwork\ServiceContainer\ExtensionManager;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;

@@ -30,7 +30,16 @@ final class PHPUnitExceptionStringer implements ExceptionStringer
         return $exception instanceof \PHPUnit\Framework\Exception;
     }
 
-    public function stringException(Exception $exception, int $verbosity): string
+    /**
+     * Renders failure details.
+     *
+     * NB, cannot use strict parameter types here to keep compatibility with the
+     * ExceptionStringer interface in Behat 3.x.
+     *
+     * @param Exception $exception
+     * @param int $verbosity
+     */
+    public function stringException($exception, $verbosity): string
     {
         try {
             if (class_exists(ThrowableToStringMapper::class)) {
