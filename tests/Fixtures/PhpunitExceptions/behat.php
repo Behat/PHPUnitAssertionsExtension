@@ -13,8 +13,7 @@ return (new Config())
         (new Profile('default'))
             ->withTesterOptions(
                 (new TesterOptions())->withPrintBehatDeprecations())
-            )
-
+    )
     ->withProfile(
         (new Profile('with-extension'))
             ->withExtension(new Extension(BehatPHPUnitAssertionsExtension::class)),
