@@ -1,4 +1,5 @@
-Feature: PHPUnit assertions are not shown with details by default
+@behat-4
+Feature: PHPUnit assertions are not shown with details by default in Behat 4
   In order to know that this extension is working
   As an extension developer
   I need to know that Behat is not automatically formatting PHPUnit exceptions
